@@ -1,54 +1,52 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import StarRating from "./StarRating";
-import { useMovies } from "./useMovies";
-import { useLocalStorageState } from "./useLocalStorageState";
 
-// const tempMovieData = [
-//   {
-//     imdbID: "tt1375666",
-//     Title: "Inception",
-//     Year: "2010",
-//     Poster:
-//       "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-//   },
-//   {
-//     imdbID: "tt0133093",
-//     Title: "The Matrix",
-//     Year: "1999",
-//     Poster:
-//       "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
-//   },
-//   {
-//     imdbID: "tt6751668",
-//     Title: "Parasite",
-//     Year: "2019",
-//     Poster:
-//       "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
-//   },
-// ];
+const tempMovieData = [
+  {
+    imdbID: "tt1375666",
+    Title: "Inception",
+    Year: "2010",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
+  },
+  {
+    imdbID: "tt0133093",
+    Title: "The Matrix",
+    Year: "1999",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
+  },
+  {
+    imdbID: "tt6751668",
+    Title: "Parasite",
+    Year: "2019",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
+  },
+];
 
-// const tempWatchedData = [
-//   {
-//     imdbID: "tt1375666",
-//     Title: "Inception",
-//     Year: "2010",
-//     Poster:
-//       "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-//     runtime: 148,
-//     imdbRating: 8.8,
-//     userRating: 10,
-//   },
-//   {
-//     imdbID: "tt0088763",
-//     Title: "Back to the Future",
-//     Year: "1985",
-//     Poster:
-//       "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGUtZjIxNi00ZjBkLTg1MjgtOWIyNThiZWIwYjRiXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
-//     runtime: 116,
-//     imdbRating: 8.5,
-//     userRating: 9,
-//   },
-// ];
+const tempWatchedData = [
+  {
+    imdbID: "tt1375666",
+    Title: "Inception",
+    Year: "2010",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
+    runtime: 148,
+    imdbRating: 8.8,
+    userRating: 10,
+  },
+  {
+    imdbID: "tt0088763",
+    Title: "Back to the Future",
+    Year: "1985",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGUtZjIxNi00ZjBkLTg1MjgtOWIyNThiZWIwYjRiXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
+    runtime: 116,
+    imdbRating: 8.5,
+    userRating: 9,
+  },
+];
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -60,19 +58,11 @@ const KEY = "315ae1f2";
 // STRUCTURAL COMPONENT!
 export default function App() {
   const [query, setQuery] = useState("");
-  // Move into the custom hook of useMovies! Commented out for reference!
-  // const [movies, setMovies] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [error, setError] = useState("");
+  const [movies, setMovies] = useState([]);
+  const [watched, setWatched] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [selectedID, setSelectedID] = useState(null);
-  // const [watched, setWatched] = useState([]);
-  // Moved to a custom hook! useLocalStorageState!
-  // const [watched, setWatched] = useState(function () {
-  //   const storedValue = localStorage.getItem("watched");
-  //   return JSON.parse(storedValue);
-  // });
-
-  const [watched, setWatched] = useLocalStorageState([], "watched");
 
   const handleSelectMovie = (id) => {
     setSelectedID((selectedID) => (id === selectedID ? null : id));
@@ -90,73 +80,60 @@ export default function App() {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   };
 
-  // We will store a movie in local storage each time a movie was added! So we will add the movie both in movie watched list and local storage!
-  // Moved to a custom hook! useLocalStorageState!
-  // useEffect(
-  //   function () {
-  //     localStorage.setItem("watched", JSON.stringify(watched));
-  //   },
-  //   [watched]
-  // );
-
-  // Coming from the custom hook useMovies!
-  const { movies, isLoading, error } = useMovies(query, handleCloseMovie);
-
   // This is basically how we do data fetching in simple React applications!
-  // This huge block of code was extracted into a custom hook! This is commented out just for reference!
-  // useEffect(
-  //   function () {
-  //     // For the cleanup function!
-  //     const controller = new AbortController();
+  useEffect(
+    function () {
+      // For the cleanup function!
+      const controller = new AbortController();
 
-  //     async function fetchMovies() {
-  //       try {
-  //         setIsLoading(true);
-  //         setError("");
-  //         const result = await fetch(
-  //           `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
-  //           { signal: controller.signal }
-  //         );
+      async function fetchMovies() {
+        try {
+          setIsLoading(true);
+          setError("");
+          const result = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            { signal: controller.signal }
+          );
 
-  //         if (!result.ok) {
-  //           throw new Error("Oops! Something went wrong with fetching movies!");
-  //         }
+          if (!result.ok) {
+            throw new Error("Oops! Something went wrong with fetching movies!");
+          }
 
-  //         const data = await result.json();
+          const data = await result.json();
 
-  //         if (data.Response === "False") {
-  //           throw new Error("Movie not found!");
-  //         }
-  //         setMovies(data.Search);
-  //         setError("");
-  //       } catch (err) {
-  //         // This err.message is basically the string that we passed above! Which is: "Oops! Something went wrong with fetching movies!"
-  //         if (err.name !== "AbortError") {
-  //           setError(err.message);
-  //         }
-  //       } finally {
-  //         // This finally will always be executed at the very end!
-  //         setIsLoading(false);
-  //       }
-  //     }
+          if (data.Response === "False") {
+            throw new Error("Movie not found!");
+          }
+          setMovies(data.Search);
+          setError("");
+        } catch (err) {
+          // This err.message is basically the string that we passed above! Which is: "Oops! Something went wrong with fetching movies!"
+          if (err.name !== "AbortError") {
+            setError(err.message);
+          }
+        } finally {
+          // This finally will always be executed at the very end!
+          setIsLoading(false);
+        }
+      }
 
-  //     // If there is no query (user hasn't wrote anything in the search bar), then 'fetchMovies()' below won't even be called! Basically the whole function!
-  //     if (!query.length) {
-  //       setMovies([]);
-  //       setError("");
-  //       return;
-  //     }
+      // If there is no query (user hasn't wrote anything in the search bar), then 'fetchMovies()' below won't even be called! Basically the whole function!
+      if (!query.length) {
+        setMovies([]);
+        setError("");
+        return;
+      }
 
-  //     // In case the movie details of a move was opened and then you typed something else in the search bar, the movie details will automatically close!
-  //     handleCloseMovie();
+      // In case the movie details of a move was opened and then you typed something else in the search bar, the movie details will automatically close!
+      handleCloseMovie();
 
-  //     // After you finish writing your useEffect function, make sure to call it out here!
-  //     fetchMovies();
+      // After you finish writing your useEffect function, make sure to call it out here!
+      fetchMovies();
 
-  //     return () => controller.abort();
-  //   },
-  //   [query]
-  // );
+      return () => controller.abort();
+    },
+    [query]
+  );
 
   return (
     <>
@@ -253,28 +230,6 @@ function NumResults({ movies }) {
 
 // STATEFUL COMPONENT!
 function Search({ query, setQuery }) {
-  // Automatically focus on the input element once the user opens the website! (Using useRef and useEffect with empty dependency array)!
-  const inputEl = useRef(null);
-
-  useEffect(
-    function () {
-      function callback(e) {
-        if (document.activeElement === inputEl.current) {
-          return;
-        }
-
-        if (e.code === "Enter") {
-          inputEl.current.focus();
-          setQuery("");
-        }
-      }
-
-      document.addEventListener("keydown", callback);
-      return () => document.removeEventListener("keydown", callback);
-    },
-    [setQuery]
-  );
-
   return (
     <input
       className="search"
@@ -282,7 +237,6 @@ function Search({ query, setQuery }) {
       placeholder="Search movies..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
-      ref={inputEl}
     />
   );
 }
@@ -376,15 +330,6 @@ function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState("");
 
-  // useRef to persist data between renders!
-  const countRef = useRef(0);
-  useEffect(
-    function () {
-      if (userRating) countRef.current = countRef.current + 1;
-    },
-    [userRating]
-  );
-
   // So we can't add the same movie to watched list more than once!
   const isWatched = watched.map((movie) => movie.imdbID).includes(selectedID);
   const watchedUserRating = watched.find(
@@ -414,7 +359,6 @@ function MovieDetails({ selectedID, onCloseMovie, onAddWatched, watched }) {
       imdbRating: Number(imdbRating),
       runtime: Number(runtime.split(" ").at(0)),
       userRating,
-      countRatingDecisions: countRef.current,
     };
 
     onAddWatched(newWatchedMovie);

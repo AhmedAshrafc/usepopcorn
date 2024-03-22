@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 import { useMovies } from "./useMovies";
-import { useLocalStorageState } from "./useLocalStorageState";
 
 // const tempMovieData = [
 //   {
@@ -60,19 +59,15 @@ const KEY = "315ae1f2";
 // STRUCTURAL COMPONENT!
 export default function App() {
   const [query, setQuery] = useState("");
-  // Move into the custom hook of useMovies! Commented out for reference!
-  // const [movies, setMovies] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [error, setError] = useState("");
+  const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [selectedID, setSelectedID] = useState(null);
   // const [watched, setWatched] = useState([]);
-  // Moved to a custom hook! useLocalStorageState!
-  // const [watched, setWatched] = useState(function () {
-  //   const storedValue = localStorage.getItem("watched");
-  //   return JSON.parse(storedValue);
-  // });
-
-  const [watched, setWatched] = useLocalStorageState([], "watched");
+  const [watched, setWatched] = useState(function () {
+    const storedValue = localStorage.getItem("watched");
+    return JSON.parse(storedValue);
+  });
 
   const handleSelectMovie = (id) => {
     setSelectedID((selectedID) => (id === selectedID ? null : id));
@@ -91,72 +86,67 @@ export default function App() {
   };
 
   // We will store a movie in local storage each time a movie was added! So we will add the movie both in movie watched list and local storage!
-  // Moved to a custom hook! useLocalStorageState!
-  // useEffect(
-  //   function () {
-  //     localStorage.setItem("watched", JSON.stringify(watched));
-  //   },
-  //   [watched]
-  // );
-
-  // Coming from the custom hook useMovies!
-  const { movies, isLoading, error } = useMovies(query, handleCloseMovie);
+  useEffect(
+    function () {
+      localStorage.setItem("watched", JSON.stringify(watched));
+    },
+    [watched]
+  );
 
   // This is basically how we do data fetching in simple React applications!
-  // This huge block of code was extracted into a custom hook! This is commented out just for reference!
-  // useEffect(
-  //   function () {
-  //     // For the cleanup function!
-  //     const controller = new AbortController();
+  useEffect(
+    function () {
+      // For the cleanup function!
+      const controller = new AbortController();
 
-  //     async function fetchMovies() {
-  //       try {
-  //         setIsLoading(true);
-  //         setError("");
-  //         const result = await fetch(
-  //           `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
-  //           { signal: controller.signal }
-  //         );
+      async function fetchMovies() {
+        try {
+          setIsLoading(true);
+          setError("");
+          const result = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            { signal: controller.signal }
+          );
 
-  //         if (!result.ok) {
-  //           throw new Error("Oops! Something went wrong with fetching movies!");
-  //         }
+          if (!result.ok) {
+            throw new Error("Oops! Something went wrong with fetching movies!");
+          }
 
-  //         const data = await result.json();
+          const data = await result.json();
 
-  //         if (data.Response === "False") {
-  //           throw new Error("Movie not found!");
-  //         }
-  //         setMovies(data.Search);
-  //         setError("");
-  //       } catch (err) {
-  //         // This err.message is basically the string that we passed above! Which is: "Oops! Something went wrong with fetching movies!"
-  //         if (err.name !== "AbortError") {
-  //           setError(err.message);
-  //         }
-  //       } finally {
-  //         // This finally will always be executed at the very end!
-  //         setIsLoading(false);
-  //       }
-  //     }
+          if (data.Response === "False") {
+            throw new Error("Movie not found!");
+          }
+          setMovies(data.Search);
+          setError("");
+        } catch (err) {
+          // This err.message is basically the string that we passed above! Which is: "Oops! Something went wrong with fetching movies!"
+          if (err.name !== "AbortError") {
+            setError(err.message);
+          }
+        } finally {
+          // This finally will always be executed at the very end!
+          setIsLoading(false);
+        }
+      }
 
-  //     // If there is no query (user hasn't wrote anything in the search bar), then 'fetchMovies()' below won't even be called! Basically the whole function!
-  //     if (!query.length) {
-  //       setMovies([]);
-  //       setError("");
-  //       return;
-  //     }
+      // If there is no query (user hasn't wrote anything in the search bar), then 'fetchMovies()' below won't even be called! Basically the whole function!
+      if (!query.length) {
+        setMovies([]);
+        setError("");
+        return;
+      }
 
-  //     // In case the movie details of a move was opened and then you typed something else in the search bar, the movie details will automatically close!
-  //     handleCloseMovie();
+      // In case the movie details of a move was opened and then you typed something else in the search bar, the movie details will automatically close!
+      handleCloseMovie();
 
-  //     // After you finish writing your useEffect function, make sure to call it out here!
-  //     fetchMovies();
+      // After you finish writing your useEffect function, make sure to call it out here!
+      fetchMovies();
 
-  //     return () => controller.abort();
-  //   },
-  //   [query]
-  // );
+      return () => controller.abort();
+    },
+    [query]
+  );
 
   return (
     <>
